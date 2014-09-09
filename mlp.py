@@ -424,7 +424,7 @@ if __name__ == '__main__':
     if sys.argv[1] == 'train':
         test_mlp(params_file=params_file)
 
-    elif sys.argv[1] == 'predict_batch':
+    elif sys.argv[1] == 'validate_batch':
         model,model_r = build_model(params_file=params_file)
         data = open('../train.csv')
         data.readline() #skip first header line
@@ -444,6 +444,24 @@ if __name__ == '__main__':
                 im = Image.fromarray(image_matrix,mode='L')
                 fail_counter = fail_counter + 1
                 im.save("pics/" + str(fail_counter)+"_"+str(label)+"_"+str(prediction)+".png")
+
+    elif sys.argv[1] == 'test_batch':
+        dest_path = sys.argv[3]
+        model,model_r = build_model(params_file=params_file)
+        data = open('../test.csv')
+        data.readline() #skip first header line
+        all_counter = 0
+        f = open(dest_path,'w')
+        
+        for line in data:
+            all_counter = all_counter + 1
+            image = line.split(',')
+            prediction = run_prediction(model,image_array=image)
+            output_line = str(all_counter) + ',' + str(prediction)
+            print output_line
+            f.write(output_line + "\n")
+
+        f.close()
 
     elif sys.argv[1] == 'predict':
 
